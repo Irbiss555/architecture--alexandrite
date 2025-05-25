@@ -1,0 +1,19 @@
+@startuml
+actor API_User
+participant "MES API (C#)" as API
+participant "Redis Cache" as Redis
+participant "MES Core (C# service)" as Core
+
+API_User -> API: POST /calculate-price (model_hash, params)
+API -> Redis: GET pricing:<model_hash>:<params_hash>
+
+alt Cache Hit
+    Redis --> API: готовая цена
+    API --> API_User: результат расчёта
+else Cache Miss
+    API -> Core: Выполнить расчёт стоимости
+    Core --> API: цена
+    API -> Redis: SET pricing:<model_hash>:<params_hash> TTL=24h
+    API --> API_User: результат расчёта
+end
+@enduml
