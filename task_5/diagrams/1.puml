@@ -1,0 +1,21 @@
+@startuml
+actor Operator
+participant "MES UI (React)" as UI
+participant "MES API (C#)" as API
+participant "Redis Cache" as Redis
+participant "MES DB (PostgreSQL)" as DB
+
+Operator -> UI: Открывает дашборд заказов
+UI -> API: GET /orders?status=MANUFACTURING_APPROVED
+API -> Redis: GET orders:MANUFACTURING_APPROVED:page:1
+
+alt Cache Hit
+    Redis --> API: список заказов
+    API --> UI: список заказов
+else Cache Miss
+    API -> DB: SELECT * FROM orders WHERE status='MANUFACTURING_APPROVED' LIMIT 50
+    DB --> API: список заказов
+    API -> Redis: SET orders:MANUFACTURING_APPROVED:page:1
+    API --> UI: список заказов
+end
+@enduml
