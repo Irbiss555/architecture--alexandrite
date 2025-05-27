@@ -56,6 +56,10 @@
 
 ## 5. Предлагаемое решение
 
+![logging](logging_diagram.png)
+
+Ссылка на диаграму: `./logging_diagram.drawio`
+
 ### Технологии:
 - `Logback + SLF4J` (для Java/Spring Boot)
 - `Serilog` (для C#/.NET)
